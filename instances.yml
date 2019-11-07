@@ -1,106 +1,67 @@
 global_configuration:
   CONTAINER_REGISTRY: hub.juniper.net/contrail
-  CONTAINER_REGISTRY_USERNAME: < container_registry_username >
+  CONTAINER_REGISTRY_USERNAME: < container_registry_username >  // TCS credentials like we did in CC yml file.
   CONTAINER_REGISTRY_PASSWORD: < container_registry_password >
 provider_config:
   bms:
-    ssh_pwd: <Pwd>
+    ssh_pwd: <Pwd>  //  VM  or server password ( these will be same in all)
     ssh_user: root
-    ntpserver: <NTP Server>
+    ntpserver: <NTP Server>   ( give google ip address)
     domainsuffix: local
 instances:
   bms1:
     provider: bms
-    ip: <BMS IP>
+    ip: <BMS IP>  ( cluster  VM ip address)  ( this will be login ip)
     roles:
+     config:
+      dhcp:
       config_database:
-      config:
       control:
-      analytics_database:
-      analytics:
       webui:
+      analytics:
+      analytics_database:
+      analytics_alarm:
+      analytics_snmp:
       vrouter:
-      openstack:
+        TSN_EVPN_MODE: true            // it is not needed as we are not using Bare metal as now. But i still gone and marked as TRUE
+        VROUTER_GATEWAY: <192.168.2.1>   put gateway ip here .. going towards fabric
+      openstack_control:
+      openstack_network:
+      openstack_storage:
+      openstack_monitoring:
       openstack_compute:
   bms2:
     provider: bms
-    ip: <BMS2 IP>
-    roles:
-      openstack:
-  bms3:
-    provider: bms
-    ip: <BMS3 IP>
-    roles:
-      openstack:
-  bms4:
-    provider: bms
-    ip: <BMS4 IP>
-    roles:
-      config_database:
-      config:
-      control:
-      analytics_database:
-      analytics:
-      webui:
-  bms5:
-    provider: bms
-    ip: <BMS5 IP>
-    roles:
-      config_database:
-      config:
-      control:
-      analytics_database:
-      analytics:
-      webui:
-  bms6:
-    provider: bms
-    ip: <BMS6 IP>
-    roles:
-      config_database:
-      config:
-      control:
-      analytics_database:
-      analytics:
-      webui:
-  bms7:
-    provider: bms
-    ip: <BMS7 IP>
+    ip: < compute 1  IP>
     roles:
       vrouter:
-        PHYSICAL_INTERFACE: <Interface name>
-        VROUTER_GATEWAY: <Gateway IP>
+        PHYSICAL_INTERFACE: <Interface name> <  check  ip address  you will see nic  as enso something put that interface here>
+        VROUTER_GATEWAY: <Gateway IP>   < gateway according to the topology?
       openstack_compute:
-  bms8:
+   bms3:
     provider: bms
-    ip: <BMS8 IP>
-    roles:
+    ip: < compute 2 IP>
+   roles:
       vrouter:
-        # Add following line for TSN Compute Node
-        TSN_EVPN_MODE: True
+        PHYSICAL_INTERFACE: <Interface name> <  check  ip address  you will see nic  as enso something put that interface here>
+        VROUTER_GATEWAY: <Gateway IP>   < gateway according to the topology?
       openstack_compute:
 contrail_configuration:
   CLOUD_ORCHESTRATOR: openstack
-  CONTRAIL_VERSION: latest or <contrail_container_tag>
-  CONTRAIL_CONTAINER_TAG: <contrail_container_tag>-queens
+  CONTRAIL_VERSION: "1908.47"
+  CONTRAIL_CONTAINER_TAG: "1908.47-queens"
   RABBITMQ_NODE_PORT: 5673
-  VROUTER_GATEWAY: <Gateway IP>
+  VROUTER_GATEWAY: <Gateway IP>    < put gateway of cluster vm>
   ENCAP_PRIORITY: VXLAN,MPLSoUDP,MPLSoGRE
   AUTH_MODE: keystone
-  KEYSTONE_AUTH_HOST: <Internal VIP>
+  KEYSTONE_AUTH_HOST: <ip address on cluster VM same as bms1 in our case>
   KEYSTONE_AUTH_URL_VERSION: /v3
-  CONTROLLER_NODES: < list of mgmt. ip of control nodes >
-  CONTROL_NODES: <list of control-data ip of control nodes>
   OPENSTACK_VERSION: queens
 kolla_config:
   kolla_globals:
     openstack_release: queens
-    kolla_internal_vip_address: <Internal VIP>
-    kolla_external_vip_address: <External VIP>
-    openstack_release: queens
-    enable_haproxy: "no" 	 ("no" by default, set "yes" to enable)
-    enable_ironic: "no"       ("no" by default, set "yes" to enable)
-    enable_swift: "no"        ("no" by default, set "yes" to enable)
-    swift_disk_partition_size = 10GB
-    keepalived_virtual_router_id: <Value between 0-255>
+    enable_haproxy: "no" 	
+    enable_ironic: "no"       
+    enable_swift: "no"       
   kolla_passwords:
-    keystone_admin_password: <Keystone Admin Password>
+    keystone_admin_password: contrail123
