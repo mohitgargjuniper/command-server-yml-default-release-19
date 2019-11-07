@@ -1,0 +1,106 @@
+global_configuration:
+  CONTAINER_REGISTRY: hub.juniper.net/contrail
+  CONTAINER_REGISTRY_USERNAME: < container_registry_username >
+  CONTAINER_REGISTRY_PASSWORD: < container_registry_password >
+provider_config:
+  bms:
+    ssh_pwd: <Pwd>
+    ssh_user: root
+    ntpserver: <NTP Server>
+    domainsuffix: local
+instances:
+  bms1:
+    provider: bms
+    ip: <BMS IP>
+    roles:
+      config_database:
+      config:
+      control:
+      analytics_database:
+      analytics:
+      webui:
+      vrouter:
+      openstack:
+      openstack_compute:
+  bms2:
+    provider: bms
+    ip: <BMS2 IP>
+    roles:
+      openstack:
+  bms3:
+    provider: bms
+    ip: <BMS3 IP>
+    roles:
+      openstack:
+  bms4:
+    provider: bms
+    ip: <BMS4 IP>
+    roles:
+      config_database:
+      config:
+      control:
+      analytics_database:
+      analytics:
+      webui:
+  bms5:
+    provider: bms
+    ip: <BMS5 IP>
+    roles:
+      config_database:
+      config:
+      control:
+      analytics_database:
+      analytics:
+      webui:
+  bms6:
+    provider: bms
+    ip: <BMS6 IP>
+    roles:
+      config_database:
+      config:
+      control:
+      analytics_database:
+      analytics:
+      webui:
+  bms7:
+    provider: bms
+    ip: <BMS7 IP>
+    roles:
+      vrouter:
+        PHYSICAL_INTERFACE: <Interface name>
+        VROUTER_GATEWAY: <Gateway IP>
+      openstack_compute:
+  bms8:
+    provider: bms
+    ip: <BMS8 IP>
+    roles:
+      vrouter:
+        # Add following line for TSN Compute Node
+        TSN_EVPN_MODE: True
+      openstack_compute:
+contrail_configuration:
+  CLOUD_ORCHESTRATOR: openstack
+  CONTRAIL_VERSION: latest or <contrail_container_tag>
+  CONTRAIL_CONTAINER_TAG: <contrail_container_tag>-queens
+  RABBITMQ_NODE_PORT: 5673
+  VROUTER_GATEWAY: <Gateway IP>
+  ENCAP_PRIORITY: VXLAN,MPLSoUDP,MPLSoGRE
+  AUTH_MODE: keystone
+  KEYSTONE_AUTH_HOST: <Internal VIP>
+  KEYSTONE_AUTH_URL_VERSION: /v3
+  CONTROLLER_NODES: < list of mgmt. ip of control nodes >
+  CONTROL_NODES: <list of control-data ip of control nodes>
+  OPENSTACK_VERSION: queens
+kolla_config:
+  kolla_globals:
+    openstack_release: queens
+    kolla_internal_vip_address: <Internal VIP>
+    kolla_external_vip_address: <External VIP>
+    openstack_release: queens
+    enable_haproxy: "no" 	 ("no" by default, set "yes" to enable)
+    enable_ironic: "no"       ("no" by default, set "yes" to enable)
+    enable_swift: "no"        ("no" by default, set "yes" to enable)
+    swift_disk_partition_size = 10GB
+    keepalived_virtual_router_id: <Value between 0-255>
+  kolla_passwords:
+    keystone_admin_password: <Keystone Admin Password>
